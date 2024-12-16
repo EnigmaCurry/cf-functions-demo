@@ -6,14 +6,23 @@
 ## On Fedora (41):
 sudo dnf install -y @development-tools just rustup npm
 
+## Setup Rust:
 rustup-init -y
 . "$HOME/.cargo/env"
 echo "Rust installed."
 
+## Clone repo:
 REPO=EnigmaCurry/cf-functions-demo
 git clone https://github.com/${REPO} ~/git/vendor/${REPO}
 cd ~/git/vendor/${REPO}
 
+## Create default environment file:
+cp -n .env-dist .env
+
+## Build deployment files (optional):
+#just build
+
+## Run dev server:
 just dev
 ```
 

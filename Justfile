@@ -1,5 +1,5 @@
 set export
-set dotenv-load := true
+set dotenv-required := true
 
 current_dir := `pwd`
 RUST_LOG := "info"
@@ -17,9 +17,6 @@ deps:
       exit 1; \
     fi
     @if ! command -v cargo-watch > /dev/null; then \
-      echo; \
-      echo; \
-      echo "Installing dependencies:"; \
       cargo install cargo-watch; \
     fi
     @if ! command -v wrangler > /dev/null; then \
@@ -27,8 +24,20 @@ deps:
       npm config set prefix "${NPM_ROOT}"; \
       npm install -g wrangler; \
     fi
-    
+    @if ! command -v worker-build > /dev/null; then \
+      cargo install worker-build; \
+    fi
+
+# build worker deployment files
+build: deps
+    ${NPM_ROOT}/bin/wrangler build
+
 # Run dev server
 dev: deps
-    cargo watch --why -i build -i target -- "${NPM_ROOT}/bin/wrangler" dev --live-reload false
+    cargo watch --why -i build -i target -- ${NPM_ROOT}/bin/wrangler dev --live-reload false
 
+deploy:
+    @${NPM_ROOT}/bin/wrangler 
+
+clean:
+    rm node_modules npm target .wrangler -rf

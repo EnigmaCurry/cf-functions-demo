@@ -2,3 +2,6 @@ target/
 npm/
 node_modules/
 .wrangler
+.env
+.env_*
+dist/

@@ -1,9 +1,12 @@
 name = "cf-functions-demo"
 main = "build/worker/shim.mjs"
 compatibility_date = "2024-12-13"
+vars = { ENVIRONMENT = "development" }
+route = "test.example.com/*"
+workers_dev = true
 
 [build]
-command = "cargo install -q worker-build && worker-build --release"
+command = "worker-build --release"
 
 [env.production]
 workers_dev = false
