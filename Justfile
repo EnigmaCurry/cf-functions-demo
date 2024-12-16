@@ -20,6 +20,9 @@ deps:
       echo "Installing dependencies:"; \
       cargo install cargo-watch; \
     fi
+    @if ! command -v wrangler > /dev/null; then \
+      npm install -g wrangler; \
+    fi
     
 # Run dev server
 dev: deps
