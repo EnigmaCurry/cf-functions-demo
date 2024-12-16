@@ -23,3 +23,10 @@ automatically re-run `npx wrangler dev` on any source file changes.
 This is in fact what `npx wrangler dev` is supposed to do on its own,
 but in my experience it did not work, but restarting the process via
 cargo-watch does.
+
+## Add a domain to your account
+
+Register an Internet domain name and add it to your Cloudflare
+account. Configure DNS.
+
+

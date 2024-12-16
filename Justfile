@@ -1,8 +1,10 @@
 set export
+set dotenv-load := true
 
 current_dir := `pwd`
 RUST_LOG := "info"
 RUST_BACKTRACE := "1"
+NPM_ROOT := "npm"
 
 # print help for Just targets
 help:
@@ -21,9 +23,12 @@ deps:
       cargo install cargo-watch; \
     fi
     @if ! command -v wrangler > /dev/null; then \
+      mkdir -p "${NPM_ROOT}"; \
+      npm config set prefix "${NPM_ROOT}"; \
       npm install -g wrangler; \
     fi
     
 # Run dev server
 dev: deps
-    cargo watch -- npx wrangler dev --live-reload false
+    cargo watch --why -i build -i target -- "${NPM_ROOT}/bin/wrangler" dev --live-reload false
+
