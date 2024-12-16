@@ -26,12 +26,12 @@ cp -n .env-dist .env
 just dev
 ```
 
-The dev loop uses
+The `just dev` target uses
 [cargo-watch](https://github.com/watchexec/cargo-watch) to
-automatically re-run `npx wrangler dev` on any source file changes.
-This is in fact what `npx wrangler dev` is supposed to do on its own,
-but in my experience it did not work, but restarting the process via
-cargo-watch does.
+automatically re-run `wrangler dev` on any source file changes. This
+is in fact what `wrangler dev` is supposed to do on its own, but in my
+experience it did not work. Restarting the process via cargo-watch
+fixes the live reload feature.
 
 ## Add a domain to your account
 
