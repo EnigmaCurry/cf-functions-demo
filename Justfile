@@ -57,7 +57,7 @@ deploy-local: build-local
     PATH=${HOME}/.npm/bin:${PATH} wrangler deploy
 
 clean:
-    rm node_modules npm target .wrangler -rf
+    rm node_modules npm target .wrangler wrangler.toml -rf
 
 build-podman: config
     mkdir -p {{current_dir}}/build
