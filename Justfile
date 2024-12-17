@@ -50,6 +50,10 @@ dev-local: config
 #        just -E .env-dist deploy-local
 
 deploy-local: build-local
+    PATH=${HOME}/.npm/bin:${PATH} && \
+    if ! wrangler d1 info ${WORKER_NAME} &>/dev/null; then \
+      wrangler d1 create ${WORKER_NAME}; \
+    fi
     PATH=${HOME}/.npm/bin:${PATH} wrangler deploy
 
 clean:
@@ -79,10 +83,10 @@ config:
       echo "WORKER_DOMAIN is not set."; \
       exit 1; \
     elif [[ "${WORKER_DOMAIN}" == "workers.dev" ]]; then \
-      envsubst '${WORKER_NAME} ${DEPLOYMENT}' < .wrangler.template-default-zone.toml > wrangler.toml; \
+      envsubst '${WORKER_NAME} ${DEPLOYMENT} ${WORKER_DATABASE_ID}' < .wrangler.template-default-zone.toml > wrangler.toml; \
       echo "Configured the default workers.dev domain name."; \
     else \
-      envsubst '${WORKER_NAME} ${DEPLOYMENT} ${WORKER_DOMAIN}' < .wrangler.template-custom-route.toml > wrangler.toml; \
+      envsubst '${WORKER_NAME} ${DEPLOYMENT} ${WORKER_DOMAIN} ${WORKER_DATABASE_ID}' < .wrangler.template-custom-route.toml > wrangler.toml; \
       echo "Configured the custom domain name: ${WORKER_DOMAIN}."; \
     fi
     @echo Recreated wrangler.toml from environment config.

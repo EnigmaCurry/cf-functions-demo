@@ -8,3 +8,8 @@ route = { pattern = "${WORKER_DOMAIN}", custom_domain = true }
 
 [build]
 command = "worker-build --release"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "${WORKER_NAME}"
+database_id = "${WORKER_DATABASE_ID}"
