@@ -81,6 +81,14 @@ You must edit the `.env` file and add the database name and id. (TODO:
 get the ID and put it in the .env file automatically. For now, you
 have to login to the dashboard and copy the database id.)
 
+```
+### .env file excerpt:
+## Worker database (d1):
+## Both NAME and ID must be non-blank otherwise no database is configured.
+WORKER_DATABASE_NAME=cf-functions-demo
+WORKER_DATABASE_ID=xxxxxxxxx
+```
+
 ## Deploy
 
 ```
