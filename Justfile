@@ -4,37 +4,57 @@ set dotenv-required := true
 current_dir := `pwd`
 RUST_LOG := "info"
 RUST_BACKTRACE := "1"
-NPM_ROOT := "{{HOME}}/.npm"
 container_image := `basename $(pwd)`
 
 # print help for Just targets
 help:
     @just -l
 
-# Run dev server in Podman
-dev: build
+# Install local dependencies
+deps:
+    @if ! command -v npm > /dev/null; then \
+      echo "Error: npm is not installed. Please install npm and try again." >&2; \
+      exit 1; \
+    fi
+    @if ! command -v cargo-watch > /dev/null; then \
+      cargo install cargo-watch; \
+    fi
+    @if ! command -v wrangler > /dev/null; then \
+      mkdir -p "${HOME}/.npm"; \
+      npm config set prefix "${HOME}/.npm"; \
+      npm install -g wrangler; \
+    fi
+    @if ! command -v worker-build > /dev/null; then \
+      cargo install worker-build; \
+    fi
+
+dev-podman: build-podman
     podman run --rm -it \
        -v {{current_dir}}:/app:Z \
-       -v /run/user/$(id -u)/bus:/run/user/$(id -u)/bus:Z \
        --userns=keep-id \
        -p 8787:8787 \
        {{container_image}} \
        just -E .env-dist dev-local
 
-# Run local dev server
 dev-local:
     PATH=${HOME}/.npm/bin:${PATH} \
     cargo watch --why -i build -i target -i .wrangler -- \
     wrangler dev --live-reload false
 
-deploy: build
-    @${NPM_ROOT}/bin/wrangler 
+deploy-podman: build
+    podman run --rm -it \
+       -v {{current_dir}}:/app:Z \
+       --userns=keep-id \
+       {{container_image}} \
+       just -E .env-dist deploy-local
+
+deploy-local: build-local
+    PATH=${HOME}/.npm/bin:${PATH} wrangler deploy
 
 clean:
     rm node_modules npm target .wrangler -rf
 
-# build worker with Podman
-build:
+build-podman:
     mkdir -p {{current_dir}}/build
     podman build \
       --build-arg BUILDER_UID=${UID} \
@@ -47,6 +67,14 @@ build:
       podman rm ${container_id}
     @echo "Build complete: {{current_dir}}/build"
 
-# build worker with local wrangler tool
 build-local:
     PATH=${HOME}/.npm/bin:${PATH} wrangler build
+
+# Build deployment files locally
+build: build-local
+    
+# Deploy local build to cloudflare
+deploy: deploy-local
+
+# Run local development server
+dev: dev-local
