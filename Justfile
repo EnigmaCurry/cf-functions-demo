@@ -29,32 +29,35 @@ deps:
       cargo install worker-build; \
     fi
 
-dev-podman: build-podman
+shell-podman arg="bash":
     podman run --rm -it \
        -v {{current_dir}}:/app:Z \
        --userns=keep-id \
        -p 8787:8787 \
        {{container_image}} \
-       just -E .env-dist dev-local
+       {{arg}}
+
+dev-podman: build-podman
+    just shell-podman "just dev-local"
 
 dev-local: config
     PATH=${HOME}/.npm/bin:${PATH} \
     cargo watch --why -- \
     wrangler dev --live-reload false
 
-# deploy-podman: build
-#     podman run --rm -it \
-#        -v {{current_dir}}:/app:Z \
-#        --userns=keep-id \
-#        {{container_image}} \
-#        just -E .env-dist deploy-local
+deploy-podman: build-podman
+    just shell-podman "just deploy-local"
 
 deploy-local: build-local
-    PATH=${HOME}/.npm/bin:${PATH} && \
-    if ! wrangler d1 info ${WORKER_NAME} &>/dev/null; then \
-      wrangler d1 create ${WORKER_NAME}; \
-    fi
     PATH=${HOME}/.npm/bin:${PATH} wrangler deploy
+    @echo "Deployed"
+
+create-database:
+    @PATH=${HOME}/.npm/bin:${PATH}; \
+    (wrangler d1 info ${WORKER_DATABASE_NAME} && \
+    echo "Database already exists.") || \
+    (wrangler d1 create ${WORKER_DATABASE_NAME} && \
+    echo "Database created.")
 
 clean:
     rm node_modules npm target .wrangler wrangler.toml -rf

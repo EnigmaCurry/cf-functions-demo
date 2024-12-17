@@ -54,12 +54,16 @@ Once the server has started successfully you will see this displayed:
  * Save the file and the server should automatically rebuild and reload.
  * Manually refresh the page in your browser to see the change.
 
-### Use Podman (optional)
+### Use Podman instead (optional)
 
 As an alternative to a local development environment, you can create
 one in a Podman container:
 
 ```
+## If .env file does not exist, you must create it:
+just -E .env-dist env
+
+## Run the dev server in podman:
 just dev-podman
 ```
 
@@ -68,6 +72,7 @@ Open your browser (manually) to http://localhost:8787
 ## Deploy
 
 ```
+
 just deploy
 ```
 
@@ -77,3 +82,13 @@ to do it this way, you can edit `.env` and set `CLOUDFLARE_API_TOKEN`
 with an API token you create in the dashboard.
 
 You can set a custom domain name by editing the `.env` file.
+
+### Deploy from Podman (optional)
+
+If you set up a Podman environment, you may deploy from there instead:
+
+```
+just deploy-podman
+```
+
+You must set `CLOUDFLARE_API_TOKEN` in `.env` for this to work.
