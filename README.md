@@ -17,7 +17,7 @@ git clone https://github.com/${REPO} ~/git/vendor/${REPO}
 cd ~/git/vendor/${REPO}
 
 ## Create default environment file:
-cp -n .env-dist .env
+just -E .env-dist env
 
 ## Build deployment files (optional):
 #just build

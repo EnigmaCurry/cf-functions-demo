@@ -3,8 +3,8 @@ name = "${WORKER_NAME}"
 main = "build/worker/shim.mjs"
 compatibility_date = "2024-12-13"
 vars = { ENVIRONMENT = "${DEPLOYMENT}" }
-## Enable the test domain provided by cloudflare: WORKER_NAME.SERVER_ID.workers.dev
-workers_dev = ${WORKER_USE_DEFAULT_DOMAIN}
+## Use the free workers.dev domain provided by cloudflare:
+workers_dev = true
 
 [build]
 command = "worker-build --release"

@@ -1,0 +1,10 @@
+## Do not edit wrangler.toml -- this file is generated automatically by `just build`.
+name = "${WORKER_NAME}"
+main = "build/worker/shim.mjs"
+compatibility_date = "2024-12-13"
+vars = { ENVIRONMENT = "${DEPLOYMENT}" }
+workers_dev = false
+route = { pattern = "${WORKER_DOMAIN}", custom_domain = true }
+
+[build]
+command = "worker-build --release"
