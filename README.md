@@ -61,7 +61,7 @@ one in a Podman container:
 
 ```
 ## If .env file does not exist, you must create it:
-just -E .env-dist env
+cp -n .env-dist .env
 
 ## Run the dev server in podman:
 just dev-podman
