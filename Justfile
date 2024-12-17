@@ -29,7 +29,7 @@ deps:
       cargo install worker-build; \
     fi
 
-shell-podman arg="bash": build-podman
+shell-podman arg="bash":
     podman run --rm -it \
        -v {{current_dir}}:/app:Z \
        --userns=keep-id \
@@ -37,7 +37,7 @@ shell-podman arg="bash": build-podman
        {{container_image}} \
        {{arg}}
 
-dev-podman: build-podman
+dev-podman: build-podman config-podman
     just shell-podman "just dev-local"
 
 dev-local: config
@@ -45,7 +45,7 @@ dev-local: config
     cargo watch --why -- \
     wrangler dev --live-reload false
 
-deploy-podman: build-podman
+deploy-podman: build-podman config-podman
     just shell-podman "just deploy-local"
 
 deploy-local: build-local
@@ -62,7 +62,7 @@ create-database:
 clean:
     rm node_modules npm target .wrangler wrangler.toml -rf
 
-build-podman: config-podman
+build-podman:
     mkdir -p {{current_dir}}/build
     podman build \
       --build-arg BUILDER_UID=${UID} \
