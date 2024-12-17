@@ -68,7 +68,19 @@ just dev-podman
 ```
 
 Open your browser (manually) to http://localhost:8787
- 
+
+## Configure database (optional)
+
+Create a D1 (SQL) database:
+
+```
+just create-database
+```
+
+You must edit the `.env` file and add the database name and id. (TODO:
+get the ID and put it in the .env file automatically. For now, you
+have to login to the dashboard and copy the database id.)
+
 ## Deploy
 
 ```
