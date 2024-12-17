@@ -62,7 +62,7 @@ create-database:
 clean:
     rm node_modules npm target .wrangler wrangler.toml -rf
 
-build-podman: config
+build-podman: config-podman
     mkdir -p {{current_dir}}/build
     podman build \
       --build-arg BUILDER_UID=${UID} \
@@ -91,6 +91,9 @@ env:
 config:
     cd config && cargo run > {{current_dir}}/wrangler.toml
     @echo Recreated wrangler.toml from .env config.
+
+config-podman:
+    just shell-podman "just config"
 
 # Build deployment files locally
 build: build-local
