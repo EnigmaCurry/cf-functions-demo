@@ -1,7 +1,10 @@
 FROM fedora:41 AS tools
-RUN dnf install -y @development-tools just rustup npm && \
+RUN dnf install -y @development-tools just rustup npm xdg-utils host-spawn && \
     dnf clean all
-RUN useradd -ms /bin/bash builder
+ARG BUILDER_UID=1000
+ARG BUILDER_GID=1000
+RUN groupadd -g ${BUILDER_GID} builder && \
+    useradd -u ${BUILDER_UID} -g ${BUILDER_GID} -ms /bin/bash builder
 USER builder
 ENV USER=builder \
     HOME=/home/builder \
