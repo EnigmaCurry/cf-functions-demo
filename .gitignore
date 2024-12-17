@@ -1,8 +1,12 @@
+.git/
 target/
 npm/
 node_modules/
-.wrangler
+.wrangler/
+dist/
 .env
 .env_*
-dist/
 wrangler.toml
+.#*
+*.#*
+*~

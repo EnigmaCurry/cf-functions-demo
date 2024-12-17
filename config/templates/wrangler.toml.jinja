@@ -1,0 +1,26 @@
+## Do not edit wrangler.toml -- this file is generated automatically by `just build`.
+## To configure this, edit your .env file and/or template in ./config
+
+## Worker environment:
+name = "{{ worker_name }}"
+vars = { ENVIRONMENT = "{{ deployment }}" }
+main = "build/worker/shim.mjs"
+compatibility_date = "{{ compatibility_date }}"
+
+## Worker domain:
+{%- if worker_domain == "workers.dev" %}
+workers_dev = true
+{% else %}
+workers_dev = false
+route = { pattern = "{{ worker_domain }}", custom_domain = true }
+{%- endif %}
+
+{%- if use_database %}
+[[d1_databases]]
+binding = "DB"
+database_name = "{{ worker_database_name.clone().unwrap() }}"
+database_id = "{{ worker_database_id.clone().unwrap() }}"
+{%- endif %}
+
+[build]
+command = "worker-build --release"

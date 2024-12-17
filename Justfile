@@ -39,7 +39,7 @@ dev-podman: build-podman
 
 dev-local: config
     PATH=${HOME}/.npm/bin:${PATH} \
-    cargo watch --why -i build -i target -i .wrangler -- \
+    cargo watch --why -- \
     wrangler dev --live-reload false
 
 # deploy-podman: build
@@ -75,21 +75,19 @@ build-podman: config
 build-local: config
     PATH=${HOME}/.npm/bin:${PATH} wrangler build
 
+# Create .env file, Run: just -E .env-dist env
 env:
-    @if [[ ! -f .env ]]; then cp .env-dist .env && echo "Created new .env file."; fi
+    @if [[ ! -f .env ]]; then \
+      cp .env-dist .env && \
+      echo "Created new .env file." && \
+      echo Edit .env to set extra config values by hand.; \
+    else \
+      echo ".env file already exists."; \
+    fi
 
 config:
-    @if [[ -z "${WORKER_DOMAIN}" ]]; then \
-      echo "WORKER_DOMAIN is not set."; \
-      exit 1; \
-    elif [[ "${WORKER_DOMAIN}" == "workers.dev" ]]; then \
-      envsubst '${WORKER_NAME} ${DEPLOYMENT} ${WORKER_DATABASE_ID}' < .wrangler.template-default-zone.toml > wrangler.toml; \
-      echo "Configured the default workers.dev domain name."; \
-    else \
-      envsubst '${WORKER_NAME} ${DEPLOYMENT} ${WORKER_DOMAIN} ${WORKER_DATABASE_ID}' < .wrangler.template-custom-route.toml > wrangler.toml; \
-      echo "Configured the custom domain name: ${WORKER_DOMAIN}."; \
-    fi
-    @echo Recreated wrangler.toml from environment config.
+    cd config && cargo run > {{current_dir}}/wrangler.toml
+    @echo Recreated wrangler.toml from .env config.
 
 # Build deployment files locally
 build: build-local
