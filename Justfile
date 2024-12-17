@@ -29,7 +29,7 @@ deps:
       cargo install worker-build; \
     fi
 
-shell-podman arg="bash":
+shell-podman arg="bash": build-podman
     podman run --rm -it \
        -v {{current_dir}}:/app:Z \
        --userns=keep-id \
