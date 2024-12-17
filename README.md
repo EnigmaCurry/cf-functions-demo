@@ -3,26 +3,33 @@
 ## Setup development environment (native)
 
 ```
-## On Fedora (41):
+## On Fedora 41 (bash):
+REPO=EnigmaCurry/cf-functions-demo
+
+export PATH="$HOME/.cargo/bin:$PATH"
+(set -e
 sudo dnf install -y @development-tools just rustup npm
 
 ## Setup Rust:
 rustup-init -y
-. "$HOME/.cargo/env"
 echo "Rust installed."
 
 ## Clone repo:
-REPO=EnigmaCurry/cf-functions-demo
 git clone https://github.com/${REPO} ~/git/vendor/${REPO}
 cd ~/git/vendor/${REPO}
 
 ## Create default environment file:
 just -E .env-dist env
 
+## Install dependencies
+just deps
+
 ## Build deployment files (optional):
 #just build
+)
 
 ## Run dev server:
+cd ~/git/vendor/${REPO}
 just dev
 ```
 
