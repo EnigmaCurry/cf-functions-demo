@@ -57,8 +57,8 @@ just dev-podman
 ```
 
 Open your browser (manually) to http://localhost:8787
-
-## Deploy to development
+ 
+## Deploy
 
 ```
 just deploy
@@ -67,20 +67,6 @@ just deploy
 This should build and then open your web browser to ask to authorize
 `wrangler` to deploy to your account on your behalf. If you don't want
 to do it this way, you can edit `.env` and set `CLOUDFLARE_API_TOKEN`
-    with an API token you create in the dashboard.
+with an API token you create in the dashboard.
 
-The development environment is the default environment. By default,
-the development environment uses the free domain provided to you by
-cloudflare: `NAME.SERVER.workers.dev`. To turn this feature off you
-may edit [wrangler.toml](wrangler.toml) and set
-[workers_dev=false](https://developers.cloudflare.com/workers/configuration/routing/workers-dev/)
-and then you must provide your own domain name.
-
-## Deploy to production
-
-The production deployment requires a valid internet domain associcated
-with your Cloudflare account. Add a domain on the account overview on
-the Cloudflare dashboard. Configure your domain registrar to point the
-domain to the Cloudflare DNS servers provided to you (e.g.,
-`XXX.ns.cloudflare.com`, `YYY.ns.cloudflare.com`)
-
+You can set a custom domain name by editing the `.env` file.
