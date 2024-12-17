@@ -1,10 +1,11 @@
 set export
-set dotenv-required := true
 
 current_dir := `pwd`
 RUST_LOG := "info"
 RUST_BACKTRACE := "1"
 container_image := `basename $(pwd)`
+
+set dotenv-required := true
 
 # print help for Just targets
 help:
@@ -41,12 +42,12 @@ dev-local:
     cargo watch --why -i build -i target -i .wrangler -- \
     wrangler dev --live-reload false
 
-deploy-podman: build
-    podman run --rm -it \
-       -v {{current_dir}}:/app:Z \
-       --userns=keep-id \
-       {{container_image}} \
-       just -E .env-dist deploy-local
+# deploy-podman: build
+#     podman run --rm -it \
+#        -v {{current_dir}}:/app:Z \
+#        --userns=keep-id \
+#        {{container_image}} \
+#        just -E .env-dist deploy-local
 
 deploy-local: build-local
     PATH=${HOME}/.npm/bin:${PATH} wrangler deploy
@@ -69,6 +70,12 @@ build-podman:
 
 build-local:
     PATH=${HOME}/.npm/bin:${PATH} wrangler build
+
+wrangler_config:
+    @if [[ ! -f wrangler.toml ]]; then \
+      envsubst '${WORKER_NAME} ${DEPLOYMENT} ${WORKER_USE_DEFAULT_DOMAIN}' < .wrangler.template.toml > wrangler.toml; \
+      echo "## Created initial wrangler.toml"; \
+    fi
 
 # Build deployment files locally
 build: build-local
