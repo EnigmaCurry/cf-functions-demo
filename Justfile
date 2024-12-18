@@ -20,7 +20,7 @@ deps:
     @if ! command -v cargo-watch > /dev/null; then \
       cargo install cargo-watch; \
     fi
-    @if ! command -v wrangler > /dev/null; then \
+    @if ! test -f "${HOME}/.npm/bin/wrangler" > /dev/null; then \
       mkdir -p "${HOME}/.npm"; \
       npm config set prefix "${HOME}/.npm"; \
       npm install -g wrangler; \
@@ -41,23 +41,22 @@ dev-podman: build-podman config-podman
     just shell-podman "just dev-local"
 
 dev-local: config
-    PATH=${HOME}/.npm/bin:${PATH} \
-    cargo watch --why -- \
-    wrangler dev --live-reload false
+    cargo watch --why -- just wrangler dev --live-reload false
 
 deploy-podman: build-podman config-podman
     just shell-podman "just deploy-local"
 
 deploy-local: build-local
-    PATH=${HOME}/.npm/bin:${PATH} wrangler deploy
+    just wrangler deploy
     @echo "Deployed"
 
 create-database:
-    @PATH=${HOME}/.npm/bin:${PATH}; \
-    (wrangler d1 info ${WORKER_DATABASE_NAME} && \
-    echo "Database already exists.") || \
-    (wrangler d1 create ${WORKER_DATABASE_NAME} && \
-    echo "Database created.")
+    just wrangler d1 create ${WORKER_DATABASE_NAME}
+    echo "Database created: ${WORKER_DATABASE_NAME}"
+
+drop-database:
+    just wrangler d1 delete ${WORKER_DATABASE_NAME}
+    echo "Database deleted: ${WORKER_DATABASE_NAME}."
 
 clean:
     rm node_modules npm target .wrangler wrangler.toml -rf
@@ -76,7 +75,7 @@ build-podman:
     @echo "Build complete: {{current_dir}}/build"
 
 build-local: config
-    PATH=${HOME}/.npm/bin:${PATH} wrangler build
+    just -E .env-dist wrangler build
 
 # Create .env file, Run: just -E .env-dist env
 env:
@@ -95,6 +94,13 @@ config:
 config-podman:
     just shell-podman "just config"
 
+# Run wrangler CLI with multiple arguments
+wrangler *args:
+    PATH=${HOME}/.npm/bin:${PATH} wrangler {{args}}
+
+wrangler-podman *args: build-podman
+    just shell-podman "just wrangler {{args}}"
+
 # Build deployment files locally
 build: build-local
     
@@ -103,3 +109,9 @@ deploy: deploy-local
 
 # Run local development server
 dev: dev-local
+
+migrations-apply:
+    just wrangler d1 migrations apply DB
+
+migrations-list:
+    just wrangler d1 migrations list DB

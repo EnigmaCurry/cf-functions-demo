@@ -1,10 +1,6 @@
 use axum::{routing::get, Router};
+use std::sync::Arc;
+use worker::{Context, Env};
 
-pub mod customers;
+pub mod example;
 pub mod root;
-
-pub fn router() -> Router {
-    Router::new()
-        .route("/", get(root::root))
-        .route("/customers", get(customers::get_customers))
-}

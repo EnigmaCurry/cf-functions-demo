@@ -89,10 +89,31 @@ WORKER_DATABASE_NAME=cf-functions-demo
 WORKER_DATABASE_ID=xxxxxxxxx
 ```
 
+### Database migrations
+
+Create migration scripts to create and/or extend the schema of your
+database over time.
+
+> Note: I haven't been 100% successful with this. YMMV.
+
+```
+## Create an initial migration script named "ddl":
+just migrations-create ddl
+```
+
+This will create the file: `./migrations/0002_ddl.sql` and you can
+define your initial schema here. (`0001_example.sql` contains initial
+playground example schemas that may be deleted if you wish.)
+
+Apply all of the migration scripts in sequence:
+
+```
+just migrations-apply
+```
+
 ## Deploy
 
 ```
-
 just deploy
 ```
 
